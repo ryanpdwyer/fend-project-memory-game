@@ -4,15 +4,31 @@
 
 const li = document.getElementById("card-list");
 const scorePanel = document.getElementById("score-panel");
+const movesSpan = document.querySelector(".score-panel span.moves");
+const scorePanelStarList = document.querySelector(".score-panel .stars")
+const timerSpan = document.querySelector("#score-panel .timer");
 const cards = li.children;
 const restart = document.querySelector(".restart");
+const modal = document.querySelector('.modal');
+const modalRestart = document.querySelector('.modal .restart');
+const modalStars = document.querySelector('.modal .stars');
+const modalMoves = document.querySelector('.modal .moves');
 
 let gameState = {
     clicksInCurrentMove: 0,
     moves: 0,
     cardMatch: [],
     matchesRemaining: 8,
+    timer: 0,
+    gameActive: false,
  };
+
+function stopWatch() {
+    if (gameState.gameActive) {
+        gameState.timer += 1;
+        timerSpan.textContent = `${gameState.timer} s`; 
+    }
+}
 
 function initializeGame() {
     /* Re-shuffle the cards. HTMLCollection must be converted to an array
@@ -35,14 +51,17 @@ function initializeGame() {
     gameState.moves = 0;
     gameState.cardMatch = [];
     gameState.matchesRemaining = 8;
+    gameState.timer = 0;
+    gameState.gameActive = false;
 
     // Reset stars and moves counter.
-    const starList = scorePanel.firstElementChild
-    for (let starItem of starList.children) {
-        const star = starItem.firstElementChild;
+    for (let starItem of scorePanelStarList.children) {
+        const star = starItem;
         star.classList.add("fa-star");
         star.classList.remove("fa-star-o");
     }
+    // Reset timer
+    timerSpan.textContent = `${gameState.timer} s`;
     updateScore();
 }
 
@@ -71,27 +90,39 @@ function resolveGameState() {
         card2.classList.remove("show");
 
         if (gameState.matchesRemaining == 0) {
-            alert(`You won in ${gameState.moves} moves!`);
+            winGame();
         }
 }
 
-function updateScore() {
-    const starList = scorePanel.firstElementChild;
-    const movesSpan = scorePanel.children[1];
-    movesSpan.textContent = `${gameState.moves}`;
-    if ((gameState.moves + gameState.matchesRemaining) == 13) {
-        const star = starList.children[2].firstElementChild;
-        star.classList.remove("fa-star");
-        star.classList.add("fa-star-o");
-    } else if ((gameState.moves + gameState.matchesRemaining) == 15) {
-        const star = starList.children[1].firstElementChild;
-        star.classList.remove("fa-star");
-        star.classList.add("fa-star-o");
-    } else if ((gameState.moves + gameState.matchesRemaining) == 18) {
-        const star = starList.children[0].firstElementChild;
+function winGame() {
+    gameState.gameActive = false;
+    updateStars(modalStars);
+    modalMoves.textContent = `It took ${gameState.moves} moves and ${gameState.timer} seconds!`;
+    modal.style.display = "block";
+}
+
+function updateStars(starList) {
+    if ((gameState.moves + gameState.matchesRemaining) >= 13) {
+        const star = starList.children[2];
         star.classList.remove("fa-star");
         star.classList.add("fa-star-o");
     }
+    if ((gameState.moves + gameState.matchesRemaining) >= 15) {
+        const star = starList.children[1];
+        star.classList.remove("fa-star");
+        star.classList.add("fa-star-o");
+    }
+    if ((gameState.moves + gameState.matchesRemaining) >= 18) {
+        const star = starList.children[0];
+        star.classList.remove("fa-star");
+        star.classList.add("fa-star-o");
+    }
+}
+
+
+function updateScore() {
+    movesSpan.textContent = `${gameState.moves} moves`;
+    updateStars(scorePanelStarList);
 }
 
 function clickBoard(event) {
@@ -100,6 +131,7 @@ function clickBoard(event) {
         target.classList.add("open");
         target.classList.add("show");
         gameState.clicksInCurrentMove += 1;
+        gameState.gameActive = true;
         gameState.cardMatch.push(target);
         // Wait for a while before resolving the game state
         // so the user can see the cards.
@@ -112,7 +144,10 @@ function clickBoard(event) {
 
 li.addEventListener('click', clickBoard);
 restart.addEventListener('click', initializeGame);
-
+modalRestart.addEventListener('click', () => {
+    modal.style.display = 'none';
+    initializeGame();
+})
 
 
 /*
@@ -154,3 +189,5 @@ function shuffle(arr, options) {
 
   return collection;
 };
+
+setInterval(stopWatch, 1000);

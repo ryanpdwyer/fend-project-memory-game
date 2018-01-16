@@ -38,10 +38,10 @@ h1 {
  */
 
 .deck {
-    width: 660px;
-    min-height: 680px;
+    max-width: 636px;
+/*    min-height: 680px;*/
     background: linear-gradient(160deg, #02ccba 0%, #aa7ecd 100%);
-    padding: 32px;
+    padding: 8px;
     border-radius: 10px;
     box-shadow: 12px 15px 20px 0 rgba(46, 61, 73, 0.5);
     display: flex;
@@ -52,11 +52,17 @@ h1 {
 }
 
 .deck .card {
-    height: 125px;
-    width: 125px;
+    height: 71px;
+    width: 71px;
+    margin: 3px 3px 3px 3px;
     background: #2e3d49;
+    rotateY(180deg);
     font-size: 0;
     color: #ffffff;
+/*    transition-property: transform;
+    transition-duration: 0.5s;
+    -webkit-transition-property: transform;
+    -webkit-transition-duration: 0.5s;*/
     border-radius: 8px;
     cursor: pointer;
     display: flex;
@@ -65,13 +71,54 @@ h1 {
     box-shadow: 5px 2px 20px 0 rgba(46, 61, 73, 0.5);
 }
 
-.deck .card.open {
-    transform: rotateY(0);
+@keyframes rotateCardY {
+  0% {
+    transform: rotateY(180deg);
+    background: #2e3d49;
+    font-size: 0;
+  }
+  50% {
+    transform: rotateY(90deg);
+    background: #2e3d49;
+    font-size: 0;
+  }
+  100% {
+    transform: rotateY(0deg);
     background: #02b3e4;
-    cursor: default;
+    font-size: 33px;
+  }
 }
 
-.deck .card.show {
+@media screen and (min-width: 430px) {
+    .deck .card {
+        height: 83px;
+        width: 83px;
+        margin: 4px 4px 4px 4px;
+    }
+}
+
+@media screen and (min-width: 500px) {
+    .deck .card {
+        height:100px;
+        width: 100px;
+        margin: 5px 5px 5px 5px;
+    }
+}
+
+@media screen and (min-width: 768px) {
+    .deck .card {
+        height:135px;
+        width: 135px;
+        margin: 5px 5px 5px 5px;
+    }
+}
+
+.deck .card.open {
+    animation: 0.5s rotateCardY;
+    animation-timing-function: cubic-bezier(0.445, 0.05, 0.55, 0.95);
+    transform: rotateY(0deg);
+    background: #02b3e4;
+    cursor: default;
     font-size: 33px;
 }
 
@@ -89,21 +136,79 @@ h1 {
     text-align: left;
     width: 345px;
     margin-bottom: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    font-size: 26px;
 }
 
-.score-panel .stars {
+.score-panel .stars-moves-timer {
+    display: flex;
+    flex-direction: column;
+}
+
+.score-panel .restart {
+    display: flex;
+    flex-direction: column;
+}
+
+.score-panel .stars-div {
     margin: 0;
     padding: 0;
-    display: inline-block;
+    display: flex;
+    flex-direction: column;
     margin: 0 5px 0 0;
 }
 
-.score-panel .stars li {
+.score-panel .moves-div {
+    display: flex;
+    flex-direction: column;
+}
+
+.score-panel .moves-div {
+    display: flex;
+    flex-direction: column;
+}
+
+.stars li {
     list-style: none;
     display: inline-block;
 }
 
-.score-panel .restart {
+.restart {
     float: right;
     cursor: pointer;
+    font-size: 33px;
+}
+
+/*.timer {
+    font-size: 1;
+}*/
+
+/* The Modal (background) */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    padding-top: 100px; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.5); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 636px;
+    border-radius: 10px;
+    box-shadow: 12px 15px 20px 0 rgba(46, 61, 73, 0.5);
+    text-align: center;
 }
